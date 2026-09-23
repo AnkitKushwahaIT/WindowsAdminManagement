@@ -6,6 +6,8 @@ PowerShell scripts for creating and detecting a dedicated local administrator ac
 
 - `scripts/New-ManagedLocalAdmin.ps1` — creates or updates `LocalAdmin`, enables it, adds it to the local `Administrators` group, verifies the configuration, and writes a completion marker.
 - `scripts/Detect-ManagedLocalAdmin.ps1` — returns exit code `0` when `LocalAdmin` exists, is enabled, and is a member of the local `Administrators` group.
+- `scripts/Invoke-LocalAdminCleanup.ps1` — audits local `Administrators` membership, retains approved admins (e.g. `LocalAdmin`, `LAPSAdmin`), safely preserves the built-in `-500` administrator and optional Entra ID role SIDs, and purges unauthorized accounts and orphaned SIDs.
+- `scripts/Detect-LocalAdminCleanup.ps1` — detection script for Intune Endpoint Analytics Remediations; exits `0` if compliant, or `1` if unauthorized accounts are detected.
 
 ## Intune example
 
