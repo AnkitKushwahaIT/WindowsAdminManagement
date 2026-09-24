@@ -3,12 +3,16 @@
 .SYNOPSIS
 Detects directly listed Microsoft Entra users in local Administrators.
 .DESCRIPTION
-Exit 0: no targeted users. Exit 1: targeted users found. Exit 2: detection error.
-For Intune Remediations, exit 1 triggers remediation; errors do not trigger it.
+Win32 (default): exit 0 plus stdout when detected; exit 1 for targets or errors.
+Remediation mode: exit 1 for targets; exit 2 for errors (no remediation triggered).
 No files or accounts are changed. Match exclusions in the cleanup script.
 #>
 [CmdletBinding()]
-param([string[]]$ExcludedMemberSids = @())
+param(
+    [string[]]$ExcludedMemberSids = @(),
+    [ValidateSet('Win32', 'Remediation')]
+    [string]$DeploymentType = 'Win32'
+)
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
@@ -40,5 +44,6 @@ try {
 catch {
     $message = $_.Exception.Message
     Write-Output ('Detection error: ' + $message.Substring(0, [Math]::Min(1200, $message.Length)))
-    exit 2
+    if ($DeploymentType -eq 'Remediation') { exit 2 }
+    exit 1
 }

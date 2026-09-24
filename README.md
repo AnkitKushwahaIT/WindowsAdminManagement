@@ -1,6 +1,6 @@
 # WindowsAdminManagement
 
-Remove directly assigned Microsoft Entra users from the local **Administrators** group on Windows devices. Includes a standalone cleanup script and matching Microsoft Intune detection script.
+Remove directly assigned Microsoft Entra users from the local **Administrators** group on Windows devices. Deploy as a Microsoft Intune Win32 app with a cleanup installer and live membership detection. Optional Intune Remediations are also supported.
 
 ## What it does
 
@@ -66,12 +66,25 @@ Cleanup logs to `%ProgramData%\WindowsAdminManagement\LocalAdminCleanup.log`. Ov
 | Script | Exit code | Meaning |
 | --- | --- | --- |
 | Detection | 0 | No targeted members |
-| Detection | 1 | Targeted members found |
-| Detection | 2 | Unable to evaluate; investigate the error |
+| Detection (Win32 default) | 1 | Targeted members found or unable to evaluate; not detected |
+| Detection (Remediation mode) | 1 / 2 | Targeted members / evaluation error |
 | Cleanup | 0 | Verified cleanup success, or completed WhatIf preview |
 | Cleanup | 1 | Preflight, removal, verification or logging failure |
 
 Preview exit 0 does not indicate compliance. Cleanup verifies live membership after removal. No completion marker is used: a historical marker cannot establish current membership.
+
+## Intune Win32 app
+
+Package `Invoke-LocalAdminCleanup.ps1` as the installer and upload `Detect-LocalAdminCleanup.ps1` as the custom detection rule. Assign as **Required** to your pilot device group and run the installer as **System** in 64-bit PowerShell.
+
+Detection uses `AzureAD\` plus `ObjectClass = User`, not an email-domain match. Local names do not necessarily contain a user's UPN or company email domain.
+
+- No targeted users: exit 0 with stdout; Intune detects the desired state and skips installation.
+- Targeted users: exit 1; the required app is not detected and cleanup can run.
+- Detection error: exit 1 with an error message; investigate the error. Cleanup independently rechecks membership before changing it.
+- After cleanup: Intune evaluates membership again. No completion file is required.
+
+See the [Win32 packaging and deployment guide](docs/Intune-Deployment.md) for exact commands, custom detection settings, troubleshooting and pilot acceptance criteria. Optional Remediations require `DeploymentType = 'Remediation'` in the uploaded detection copy to retain a distinct error exit code.
 
 ## Deployment and maintenance
 

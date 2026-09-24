@@ -1,6 +1,6 @@
 #requires -Version 5.1
 [CmdletBinding()]
-param([switch]$Child, [string]$Kind, [string]$Scenario)
+param([switch]$Child, [string]$Kind, [string]$Scenario, [string]$DeploymentType = 'Win32')
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 
@@ -17,6 +17,11 @@ if (-not $Child) {
             if ($LASTEXITCODE -ne 0) { throw "FAILED: $kindName / $case" }
             $count++
         }
+    }
+    foreach ($case in @('mixed', 'clean', 'readFailure', 'missingSid', 'invalidExclusion')) {
+        & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath -Child -Kind Detect -Scenario $case -DeploymentType Remediation
+        if ($LASTEXITCODE -ne 0) { throw "FAILED: Remediation detection / $case" }
+        $count++
     }
     Write-Output "PASS: syntax and $count isolated behavioral checks. No real account commands were executed."
     exit 0
@@ -75,6 +80,7 @@ function Add-Content {
 }
 
 $arguments = @{}
+if ($Kind -eq 'Detect') { $arguments.DeploymentType = $DeploymentType }
 if ($Scenario -eq 'excluded') { $arguments.ExcludedMemberSids = @('S-1-12-1-111-222-333-444') }
 if ($Scenario -eq 'invalidExclusion') { $arguments.ExcludedMemberSids = @('not-a-sid') }
 if ($Scenario -eq 'preview' -and $Kind -eq 'Invoke') { $arguments.WhatIf = $true }
@@ -85,13 +91,14 @@ $expectedRemovals = 0
 if ($Kind -eq 'Detect') {
     $expectedExit = 1
     if ($Scenario -in @('clean','excluded','localSameName','empty')) { $expectedExit = 0 }
-    if ($Scenario -in @('readFailure','missingSid','invalidExclusion')) { $expectedExit = 2 }
+    if ($DeploymentType -eq 'Remediation' -and $Scenario -in @('readFailure','missingSid','invalidExclusion')) { $expectedExit = 2 }
 }
 else {
     $expectedExit = 0
     if ($Scenario -in @('readFailure','verifyFailure','removeFailure','silentFailure','missingSid','invalidExclusion','logFailure','notElevated')) { $expectedExit = 1 }
     if ($Scenario -in @('mixed','caseInsensitive','single','verifyFailure','silentFailure')) { $expectedRemovals = 1 }
 }
+if ($Kind -eq 'Detect' -and $actualExit -eq 0 -and [string]::IsNullOrWhiteSpace(($output -join ''))) { throw 'Win32 detection requires nonempty stdout on success' }
 if ($actualExit -ne $expectedExit) { throw "Expected exit $expectedExit, got $actualExit. $output" }
 if ($global:testRemovals.Count -ne $expectedRemovals) { throw "Unexpected removals: $($global:testRemovals.Count), expected $expectedRemovals" }
 if (($Kind -eq 'Detect' -or $Scenario -eq 'preview') -and $global:testWrites -gt 0) { throw 'Read-only execution attempted file writes' }
