@@ -59,6 +59,18 @@ cmd.exe /c ""%SystemRoot%\Sysnative\WindowsPowerShell\v1.0\powershell.exe" -NoPr
 
 Use an Uninstall assignment only after verifying another recovery administrator. Removing a Required assignment does not delete the account. Preview manually with `Uninstall.ps1 -WhatIf`. Neither script forces a reboot or deletes the user profile.
 
+## Logging
+
+Creation and uninstall append to `%ProgramData%\WindowsAdminManagement\approvedapps.log`, preserving this format:
+
+```text
+2026-01-01 10:00:00 - Managed Local Admin 1.0.0 - Installation Started
+```
+
+Entries record start, target account, creation or reuse, group membership, verification, registry updates, completion and errors. Passwords are not intentionally logged. Use `-LogFolder "C:\CompanyIT"` on creation and uninstall to choose an administrator-controlled directory. Appending preserves earlier entries; the scripts do not rotate or overwrite the log. Manage log access and retention separately.
+
+`Write-Output` supplies a brief Intune status in addition to file logging. Detection remains read-only and writes its required result to stdout; it does not create a log file. `-WhatIf` does not write log files. Logging failures return exit 1; changes completed before a later log failure are not rolled back.
+
 ## Ownership and errors
 
 Account SID and version are recorded under `HKLM:\SOFTWARE\WindowsAdminManagement\LocalAdminAccounts\<UserName>`. No password is written to the registry or script status output. Local administrators can modify these records; ownership checks are safeguards against mistakes, not a security boundary against administrators.

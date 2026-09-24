@@ -9,9 +9,9 @@ if (-not $Child) {
         if ($e.Count) { throw ($e | Out-String) }
     }
     $matrix = @{
-        AdminCreation = @('new','blank','owned','disabled','notAdmin','unowned','mismatch','addFailure','silentAddFailure','readFailure','preview')
+        AdminCreation = @('new','blank','owned','disabled','notAdmin','unowned','mismatch','addFailure','silentAddFailure','readFailure','preview','logFailure')
         Detection = @('owned','disabled','notAdmin','unowned','mismatch','wrongVersion','absent','readFailure')
-        Uninstall = @('owned','unowned','mismatch','absent','renamed','removeFailure','silentRemoveFailure','noConfirmation','preview')
+        Uninstall = @('owned','unowned','mismatch','absent','renamed','removeFailure','silentRemoveFailure','noConfirmation','preview','logFailure')
     }
     $count=0
     foreach ($k in $matrix.Keys) {
@@ -28,6 +28,7 @@ $global:caseName=$Case
 $global:account=[pscustomobject]@{Name='ManagedLocalAdmin';SID=[pscustomobject]@{Value='S-1-5-21-1-2-3-1001'};Enabled=$true}
 $global:record=[pscustomobject]@{AccountSid=$global:account.SID.Value;Version='1.0.0'}
 $global:admin=$true
+$global:logEntries=@(); $global:logWrites=0
 $global:created=0; $global:deleted=0; $global:changes=0; $global:noExpiry=$false
 switch ($Case) {
     {$_ -in @('new','blank','absent')} { $global:account=$null; $global:record=$null; $global:admin=$false }
@@ -55,6 +56,15 @@ function New-LocalUser {
     $global:account=[pscustomobject]@{Name=$Name;SID=[pscustomobject]@{Value='S-1-5-21-1-2-3-1001'};Enabled=(-not $Disabled)}
     return $global:account
 }
+function Out-File {
+    param($LiteralPath,[switch]$Append,$Encoding,$ErrorAction)
+    $global:logWrites++
+    if ($global:caseName -eq 'logFailure') { throw 'Simulated logging failure' }
+    foreach ($entry in $input) {
+        if ($entry -notmatch '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} - Managed Local Admin 1\.0\.0 - ') { throw 'Incorrect log format' }
+        $global:logEntries += [string]$entry
+    }
+}
 function Set-LocalUser { throw 'Unexpected password/account reset' }
 function Enable-LocalUser { param($SID,$ErrorAction); $global:changes++; $global:account.Enabled=$true }
 function Add-LocalGroupMember {
@@ -72,7 +82,7 @@ function Remove-LocalUser {
 }
 function Test-Path { param($LiteralPath); return ($null -ne $global:record) }
 function Get-ItemProperty { param($LiteralPath,$ErrorAction); if (-not $global:record) { throw 'Record absent' }; $global:record }
-function New-Item { param($Path,[switch]$Force,$ErrorAction); $global:changes++; $global:record=[pscustomobject]@{AccountSid='';Version=''} }
+function New-Item { param($Path,$ItemType,[switch]$Force,$ErrorAction); if ($ItemType -eq 'Directory') { $global:logWrites++; return }; $global:changes++; $global:record=[pscustomobject]@{AccountSid='';Version=''} }
 function New-ItemProperty { param($LiteralPath,$Name,$Value,$PropertyType,[switch]$Force,$ErrorAction); $global:changes++; $global:record.$Name=$Value }
 function Remove-Item { param($LiteralPath,[switch]$Force,$ErrorAction); $global:changes++; $global:record=$null }
 $path=Join-Path $repo "scripts/LocalAdminAccount/$Kind.ps1"
@@ -95,5 +105,8 @@ if (($Kind -eq 'Detection' -or $Case -in @('preview','unowned','mismatch','readF
 if ($Kind -eq 'AdminCreation' -and $Case -eq 'new' -and ($global:created -ne 1 -or -not $global:noExpiry -or -not $global:account.Enabled -or -not $global:admin)) { throw 'Creation result invalid' }
 if ($Kind -eq 'AdminCreation' -and $Case -in @('owned','disabled','notAdmin') -and $global:created) { throw 'Existing account recreated' }
 if ($Kind -eq 'Uninstall' -and $Case -eq 'owned' -and ($global:account -or $global:record -or $global:deleted -ne 1)) { throw 'Uninstall incomplete' }
+if (($Kind -eq 'Detection' -or $Case -eq 'preview') -and $global:logWrites) { throw 'Read-only mode wrote log files' }
+if ($Kind -ne 'Detection' -and $Case -notin @('preview','logFailure') -and -not $global:logEntries.Count) { throw 'Expected lifecycle log entries' }
+if ($Case -eq 'logFailure' -and $global:changes) { throw 'Logging failed but account was modified' }
 Write-Output "PASS $Kind / $Case"
 exit 0
