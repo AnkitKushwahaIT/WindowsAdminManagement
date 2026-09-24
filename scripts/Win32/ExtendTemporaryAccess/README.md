@@ -31,4 +31,3 @@ Requires a current direct AzureAD member and a valid unexpired repository remova
 Test the requested UTC time, membership disappearing, an expired/running task, schedule update failure, repeated execution, and successful detection after the grant eventually expires.
 
 Tests simulate Windows account and scheduled-task operations. Validate the actual Win32 app on a disposable managed pilot device before broader assignment.
-

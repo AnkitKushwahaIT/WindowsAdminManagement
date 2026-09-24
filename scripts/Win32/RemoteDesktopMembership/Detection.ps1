@@ -154,4 +154,3 @@ catch {
     Write-Output ('Not detected: ' + $Failure.Substring(0, [Math]::Min(1200, $Failure.Length)))
     exit 1
 }
-

@@ -31,4 +31,3 @@ Reports direct membership only; it does not expand groups or calculate effective
 Verify the report contains the expected members and sources, and a stale or missing report returns detection exit 1.
 
 Tests simulate Windows account and scheduled-task operations. Validate the actual Win32 app on a disposable managed pilot device before broader assignment.
-

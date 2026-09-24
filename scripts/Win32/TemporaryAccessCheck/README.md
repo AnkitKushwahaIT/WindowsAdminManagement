@@ -31,4 +31,3 @@ Supports the task format created by `scripts/TemporaryAdmin/Grant-TemporaryLocal
 Check a valid grant, a disabled task, an expired task, an altered action and a permanently approved user.
 
 Tests simulate Windows account and scheduled-task operations. Validate the actual Win32 app on a disposable managed pilot device before broader assignment.
-

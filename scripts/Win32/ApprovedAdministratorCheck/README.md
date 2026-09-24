@@ -31,4 +31,3 @@ An intentionally disabled built-in Administrator still occupies the group. Inclu
 Test an approved set, an unexpected local member, a valid temporary grant, and a missing/disabled/expired removal task.
 
 Tests simulate Windows account and scheduled-task operations. Validate the actual Win32 app on a disposable managed pilot device before broader assignment.
-

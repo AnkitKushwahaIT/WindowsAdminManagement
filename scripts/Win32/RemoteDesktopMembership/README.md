@@ -31,4 +31,3 @@ Does not enable Remote Desktop, configure firewall rules, grant user logon right
 Test selected additions/removals, preservation of unrelated members, conflicting configuration, failed operations and detection of later drift.
 
 Tests simulate Windows account and scheduled-task operations. Validate the actual Win32 app on a disposable managed pilot device before broader assignment.
-

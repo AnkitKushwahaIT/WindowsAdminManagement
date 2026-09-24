@@ -31,4 +31,3 @@ Does not authenticate, test logon rights, retrieve a password, rotate a password
 Test a healthy account, a disabled account, an absent account and missing administrator membership.
 
 Tests simulate Windows account and scheduled-task operations. Validate the actual Win32 app on a disposable managed pilot device before broader assignment.
-

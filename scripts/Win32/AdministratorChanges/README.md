@@ -31,4 +31,3 @@ The first run establishes a baseline and reports no changes. Later comparisons r
 Establish a baseline, add and remove test members, rerun and inspect both current and history reports. Also test an empty group baseline and corrupt baseline handling.
 
 Tests simulate Windows account and scheduled-task operations. Validate the actual Win32 app on a disposable managed pilot device before broader assignment.
-

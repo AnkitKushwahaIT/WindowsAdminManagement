@@ -31,4 +31,3 @@ A current member must be a direct AzureAD user with a recognizable enabled repos
 Test removal and task deletion, removal failure retaining the task, repeated execution with no additional changes, and a later new grant remaining untouched by the completed request.
 
 Tests simulate Windows account and scheduled-task operations. Validate the actual Win32 app on a disposable managed pilot device before broader assignment.
-
