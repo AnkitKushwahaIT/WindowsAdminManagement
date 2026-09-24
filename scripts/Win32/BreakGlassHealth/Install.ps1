@@ -148,12 +148,10 @@ try {
     if (-not $Health.Healthy) { throw 'Break-glass account health check failed. No account or password was changed.' }
     Save-Receipt
     Write-Log '========== Install Completed Successfully =========='
-    Write-Output 'Completed: Break Glass Account Health.'
     exit 0
 }
 catch {
     $Failure = $_.Exception.Message
     try { Write-Log "ERROR: $Failure" } catch { }
-    Write-Output ('Failed: ' + $Failure.Substring(0, [Math]::Min(1200, $Failure.Length)))
     exit 1
 }

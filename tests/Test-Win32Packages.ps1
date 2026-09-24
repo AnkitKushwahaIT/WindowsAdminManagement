@@ -145,6 +145,7 @@ try {
     $Install=Join-Path $TestRoot 'Install.ps1'; $Detect=Join-Path $TestRoot 'Detection.ps1'
     $Output=& $Install
     $Actual=$LASTEXITCODE
+    if (-not [string]::IsNullOrWhiteSpace(($Output -join ''))) {throw "Installer wrote console output: $Output"}
     $FailureCases=@('expiredTask','missingTask','disabledTask','wrongAction','unauthorizedLocal','readFailure','emptyConfig','logFailure','removeFailure','silentRemoveFailure','unregisterFailure','invalidSid','unrelatedGroup','pastExpiry','shorterExpiry','setFailure','silentSetFailure','runningTask','missingUser','disabledUser','notAdmin','overlap','addFailure')
     $Expected=0
     if ($Case -in $FailureCases) {$Expected=1}

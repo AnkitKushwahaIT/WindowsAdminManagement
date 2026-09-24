@@ -53,7 +53,7 @@ No runtime prompts, passwords or credentials are required. Scripts use Windows P
 
 ## Detection and refresh
 
-Every detection script returns exit 0 **with nonempty stdout** only when its documented condition passes. Drift, stale reports, incomplete requests and errors return 1 with a short diagnostic. Details go to the local log.
+Every detection script returns exit 0 **with nonempty stdout** only when its documented condition passes. Drift, stale reports, incomplete requests and errors return 1 without console output. Details go to the local log. Installers also write no console status messages: they use file logging and exit codes.
 
 Audit/change reports use `ReportMaxAgeHours` (default 24). Detection requires a recent successful report with matching configuration/version and an unchanged report hash. Intune can rerun a Required app when that report becomes stale at a subsequent evaluation. This does not promise an exact hourly or daily execution time.
 
@@ -77,7 +77,7 @@ Both scripts append to `C:\CompanyIT\<PackageName>.log` by default:
 2026-09-24 10:00:02 - ========== Install Completed Successfully ==========
 ```
 
-Set `LogFolder` to your usual administrator-controlled log directory in both copies. Existing log contents are preserved. Account names, SIDs and errors can appear in local logs; manage permissions and retention. No passwords are accessed, changed or logged. Normal Intune stdout contains concise results, although Windows error text can include identifiers.
+Set `LogFolder` to your usual administrator-controlled log directory in both copies. Existing log contents are preserved. Account names, SIDs and errors can appear in local logs; manage permissions and retention. No passwords are accessed, changed or logged. Only successful detection writes a short result to stdout, as required by Intune custom detection. Installers and failed detection use the log and exit codes. Write-Output sends data to the calling process; it does not open a PowerShell window. These apps run under IME in System context without an interactive UI.
 
 Reports and successful-run receipts are stored in `%ProgramData%\WindowsAdminManagement\Win32\<PackageName>\`. Installers restrict the state directory to SYSTEM and Administrators and reject reparse-point paths. Receipts bind the package version/configuration to the saved report. They are operational state, not protection against a malicious local administrator. Detection logs activity but does not create a successful receipt, change membership or modify a task.
 

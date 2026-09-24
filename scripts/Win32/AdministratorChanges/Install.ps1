@@ -162,12 +162,10 @@ try {
     Write-Log "BaselineCreated=$FirstRun; Added=$($Added.Count); Removed=$($Removed.Count)"
     Save-Receipt
     Write-Log '========== Install Completed Successfully =========='
-    Write-Output 'Completed: Administrator Membership Change Report.'
     exit 0
 }
 catch {
     $Failure = $_.Exception.Message
     try { Write-Log "ERROR: $Failure" } catch { }
-    Write-Output ('Failed: ' + $Failure.Substring(0, [Math]::Min(1200, $Failure.Length)))
     exit 1
 }

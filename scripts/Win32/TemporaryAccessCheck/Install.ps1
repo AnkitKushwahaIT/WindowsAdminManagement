@@ -185,12 +185,10 @@ try {
     if (@($Status | Where-Object { -not $_.Valid }).Count) { throw 'One or more direct Entra administrators lack a valid unexpired removal task.' }
     Save-Receipt
     Write-Log '========== Install Completed Successfully =========='
-    Write-Output 'Completed: Temporary Access Check.'
     exit 0
 }
 catch {
     $Failure = $_.Exception.Message
     try { Write-Log "ERROR: $Failure" } catch { }
-    Write-Output ('Failed: ' + $Failure.Substring(0, [Math]::Min(1200, $Failure.Length)))
     exit 1
 }

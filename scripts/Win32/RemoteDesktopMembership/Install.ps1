@@ -157,12 +157,10 @@ try {
     Write-Report ([ordered]@{ Before=$Before; After=$After })
     Save-Receipt
     Write-Log '========== Install Completed Successfully =========='
-    Write-Output 'Completed: Remote Desktop Users Membership.'
     exit 0
 }
 catch {
     $Failure = $_.Exception.Message
     try { Write-Log "ERROR: $Failure" } catch { }
-    Write-Output ('Failed: ' + $Failure.Substring(0, [Math]::Min(1200, $Failure.Length)))
     exit 1
 }

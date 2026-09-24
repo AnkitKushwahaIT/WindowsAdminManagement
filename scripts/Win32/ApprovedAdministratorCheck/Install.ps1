@@ -201,12 +201,10 @@ try {
     if ($Unexpected.Count) { throw "$($Unexpected.Count) unexpected administrator member(s). Report only; no access was changed." }
     Save-Receipt
     Write-Log '========== Install Completed Successfully =========='
-    Write-Output 'Completed: Approved Administrator Check.'
     exit 0
 }
 catch {
     $Failure = $_.Exception.Message
     try { Write-Log "ERROR: $Failure" } catch { }
-    Write-Output ('Failed: ' + $Failure.Substring(0, [Math]::Min(1200, $Failure.Length)))
     exit 1
 }

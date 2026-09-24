@@ -138,12 +138,10 @@ try {
     Save-Receipt
     Write-Log "Administrator audit completed. Members: $($Members.Count)."
     Write-Log '========== Install Completed Successfully =========='
-    Write-Output 'Completed: Administrator Audit.'
     exit 0
 }
 catch {
     $Failure = $_.Exception.Message
     try { Write-Log "ERROR: $Failure" } catch { }
-    Write-Output ('Failed: ' + $Failure.Substring(0, [Math]::Min(1200, $Failure.Length)))
     exit 1
 }
