@@ -1,6 +1,6 @@
 # WindowsAdminManagement
 
-Remove directly assigned Microsoft Entra users from the local **Administrators** group on Windows devices. Deploy as a Microsoft Intune Win32 app with a cleanup installer and live membership detection. Optional Intune Remediations are also supported.
+PowerShell scripts for Windows local administrator management: clean up direct Microsoft Entra user membership or create a dedicated break-glass local administrator. Each workflow includes Intune Win32 detection. The cleanup workflow also supports optional Intune Remediations.
 
 > [!WARNING]
 > **⚠️ AI-assisted code — review before execution**
@@ -12,7 +12,16 @@ Remove directly assigned Microsoft Entra users from the local **Administrators**
 > - 🧪 Test on a non-production device first.
 > - 🔐 Verify that an emergency administrator account remains available before production deployment.
 
-## What it does
+## Script sets
+
+| Task | Scripts | Guide |
+| --- | --- | --- |
+| Remove direct Entra users from local Administrators | `scripts/Invoke-LocalAdminCleanup.ps1` and `scripts/Detect-LocalAdminCleanup.ps1` | [Cleanup deployment](docs/Intune-Deployment.md) |
+| Create, detect and uninstall a break-glass local administrator | `scripts/LocalAdminAccount/AdminCreation.ps1`, `Detection.ps1`, and `Uninstall.ps1` | [Break-glass account setup](docs/LocalAdminAccount.md) |
+
+For the break-glass account, the admin fills in the blank `InitialPassword` field in a **private copy** before packaging. The account password does not expire and is never reset on subsequent runs. No password rotation or LAPS configuration is performed. The public repository contains no configured password.
+
+## What Entra user cleanup does
 
 The default policy removes members whose names begin with `AzureAD\` and whose object class is `User`. Exact SID exclusions let organizations retain approved Entra users.
 
@@ -102,7 +111,7 @@ See the [Win32 packaging and deployment guide](docs/Intune-Deployment.md) for ex
 - [Security, scope and recovery](docs/Security-Guidance.md)
 - [Contributing](CONTRIBUTING.md)
 
-Existing deployments of older versions must replace both scripts and their detection rules. The earlier account-creation scripts and broad administrator allowlist policy have been retired. This version preserves all local accounts by design; it does not reset their passwords. Existing completion-marker files are ignored and are not automatically deleted. Do not continue using marker-only detection with this version.
+Existing deployments of older versions must replace both scripts and their detection rules. The earlier root-level account-creation scripts and broad administrator allowlist policy have been retired. The new optional `LocalAdminAccount` set uses a private password configuration and SID ownership checks; it does not automatically adopt accounts from the retired scripts. This version preserves all local accounts by design; it does not reset their passwords. Existing completion-marker files are ignored and are not automatically deleted. Do not continue using marker-only detection with this version.
 
 ## Testing
 
@@ -110,6 +119,7 @@ Run the isolated behavioral checks on Windows:
 
 ```powershell
 powershell.exe -NoProfile -File .\tests\Test-LocalAdminCleanup.ps1
+powershell.exe -NoProfile -File .\tests\Test-LocalAdminAccount.ps1
 ```
 
 The tests mock account management and logging commands; they do not modify Windows accounts. A Windows CI workflow runs the same checks. These checks are not a substitute for a managed-device pilot, including your actual LAPS recovery and Entra role configuration.

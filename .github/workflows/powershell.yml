@@ -12,3 +12,6 @@ jobs:
       - name: Syntax and isolated behavior tests
         shell: powershell
         run: .\tests\Test-LocalAdminCleanup.ps1
+      - name: Local administrator lifecycle tests
+        shell: powershell
+        run: .\tests\Test-LocalAdminAccount.ps1
