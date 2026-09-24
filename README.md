@@ -18,6 +18,7 @@ PowerShell scripts for Windows local administrator management: clean up direct M
 | --- | --- | --- |
 | Remove direct Entra users from local Administrators | `scripts/Invoke-LocalAdminCleanup.ps1` and `scripts/Detect-LocalAdminCleanup.ps1` | [Cleanup deployment](docs/Intune-Deployment.md) |
 | Create, detect and uninstall a break-glass local administrator | `scripts/LocalAdminAccount/AdminCreation.ps1`, `Detection.ps1`, and `Uninstall.ps1` | [Break-glass account setup](docs/LocalAdminAccount.md) |
+| Grant temporary access to the signed-in Entra user | `scripts/TemporaryAdmin/Grant-TemporaryLocalAdmin.ps1` | [Temporary admin access](docs/TemporaryAdmin.md) |
 
 The local account scripts preserve the original logic and logging structure, with company-specific details generalized. Enter the password in the blank `ConvertTo-SecureString` value in a **private copy** before packaging. The original creation script sets that configured password on existing accounts too. See the [account script guide](docs/LocalAdminAccount.md) for the unchanged behavior and detection limitations.
 

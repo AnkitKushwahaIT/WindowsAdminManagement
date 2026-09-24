@@ -21,3 +21,6 @@ jobs:
             $null = [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$parseErrors)
             if ($parseErrors.Count) { throw ($parseErrors | Out-String) }
           }
+      - name: Temporary administrator grant and removal tests
+        shell: powershell
+        run: .\tests\Test-TemporaryAdmin.ps1
