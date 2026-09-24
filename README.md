@@ -19,7 +19,7 @@ PowerShell scripts for Windows local administrator management: clean up direct M
 | Remove direct Entra users from local Administrators | `scripts/Invoke-LocalAdminCleanup.ps1` and `scripts/Detect-LocalAdminCleanup.ps1` | [Cleanup deployment](docs/Intune-Deployment.md) |
 | Create, detect and uninstall a break-glass local administrator | `scripts/LocalAdminAccount/AdminCreation.ps1`, `Detection.ps1`, and `Uninstall.ps1` | [Break-glass account setup](docs/LocalAdminAccount.md) |
 
-For the break-glass account, the admin fills in the blank `InitialPassword` field in a **private copy** before packaging. The account password does not expire and is never reset on subsequent runs. No password rotation or LAPS configuration is performed. The public repository contains no configured password.
+The local account scripts preserve the original logic and logging structure, with company-specific details generalized. Enter the password in the blank `ConvertTo-SecureString` value in a **private copy** before packaging. The original creation script sets that configured password on existing accounts too. See the [account script guide](docs/LocalAdminAccount.md) for the unchanged behavior and detection limitations.
 
 ## What Entra user cleanup does
 
@@ -111,7 +111,7 @@ See the [Win32 packaging and deployment guide](docs/Intune-Deployment.md) for ex
 - [Security, scope and recovery](docs/Security-Guidance.md)
 - [Contributing](CONTRIBUTING.md)
 
-Existing deployments of older versions must replace both scripts and their detection rules. The earlier root-level account-creation scripts and broad administrator allowlist policy have been retired. The new optional `LocalAdminAccount` set uses a private password configuration and SID ownership checks; it does not automatically adopt accounts from the retired scripts. This version preserves all local accounts by design; it does not reset their passwords. Existing completion-marker files are ignored and are not automatically deleted. Do not continue using marker-only detection with this version.
+Existing deployments of older versions must replace both scripts and their detection rules. The earlier root-level account-creation scripts and broad administrator allowlist policy have been retired. The optional `LocalAdminAccount` folder contains the original account scripts with company-specific details removed; its behavior is documented separately. This version preserves all local accounts by design; it does not reset their passwords. Existing completion-marker files are ignored and are not automatically deleted. Do not continue using marker-only detection with this version.
 
 ## Testing
 
@@ -119,10 +119,9 @@ Run the isolated behavioral checks on Windows:
 
 ```powershell
 powershell.exe -NoProfile -File .\tests\Test-LocalAdminCleanup.ps1
-powershell.exe -NoProfile -File .\tests\Test-LocalAdminAccount.ps1
 ```
 
-The tests mock account management and logging commands; they do not modify Windows accounts. A Windows CI workflow runs the same checks. These checks are not a substitute for a managed-device pilot, including your actual LAPS recovery and Entra role configuration.
+The cleanup tests mock account management and logging commands; they do not modify Windows accounts. The original local account scripts receive syntax checks only. A Windows CI workflow runs the same checks. These checks are not a substitute for a managed-device pilot, including your actual LAPS recovery and Entra role configuration.
 
 ## License
 

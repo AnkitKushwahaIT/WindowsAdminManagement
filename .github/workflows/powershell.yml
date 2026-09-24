@@ -9,9 +9,15 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Syntax and isolated behavior tests
+      - name: Syntax and isolated cleanup behavior tests
         shell: powershell
         run: .\tests\Test-LocalAdminCleanup.ps1
-      - name: Local administrator lifecycle tests
+      - name: Check original account script syntax without executing
         shell: powershell
-        run: .\tests\Test-LocalAdminAccount.ps1
+        run: |
+          Get-ChildItem .\scripts\LocalAdminAccount\*.ps1 | ForEach-Object {
+            $tokens = $null
+            $parseErrors = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$parseErrors)
+            if ($parseErrors.Count) { throw ($parseErrors | Out-String) }
+          }
