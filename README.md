@@ -2,7 +2,15 @@
 
 Remove directly assigned Microsoft Entra users from the local **Administrators** group on Windows devices. Deploy as a Microsoft Intune Win32 app with a cleanup installer and live membership detection. Optional Intune Remediations are also supported.
 
-> **Caution — AI-assisted code:** Parts of these scripts were generated with AI assistance. Read and review the complete scripts carefully, understand the changes they make, and adapt them to your organization's requirements before executing them in your environment. Test on a non-production device first and verify that an emergency administrator account remains available before production deployment.
+> [!WARNING]
+> **⚠️ AI-assisted code — review before execution**
+>
+> Parts of these scripts were generated with AI assistance.
+>
+> - 🔍 Read and review the complete scripts carefully and understand the changes they make.
+> - 🛠️ Adapt them to your organization's requirements before executing them in your environment.
+> - 🧪 Test on a non-production device first.
+> - 🔐 Verify that an emergency administrator account remains available before production deployment.
 
 ## What it does
 
