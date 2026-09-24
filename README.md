@@ -22,6 +22,23 @@ PowerShell scripts for Windows local administrator management: clean up direct M
 
 The local account scripts preserve the original logic and logging structure, with company-specific details generalized. Enter the password in the blank `ConvertTo-SecureString` value in a **private copy** before packaging. The original creation script sets that configured password on existing accounts too. See the [account script guide](docs/LocalAdminAccount.md) for the unchanged behavior and detection limitations.
 
+## Additional Intune Win32 administrator tools
+
+Eight separate packages are available under [`scripts/Win32`](scripts/Win32). Each contains matching standalone `Install.ps1` and `Detection.ps1` files, configurable values at the top, timestamped append-only logging, verification and exit codes for Intune.
+
+| Package | Purpose |
+| --- | --- |
+| [AdministratorAudit](scripts/Win32/AdministratorAudit) | Report direct administrator membership |
+| [ApprovedAdministratorCheck](scripts/Win32/ApprovedAdministratorCheck) | Detect unexpected members while recognizing valid temporary grants |
+| [TemporaryAccessCheck](scripts/Win32/TemporaryAccessCheck) | Check temporary removal tasks and expiry |
+| [RevokeTemporaryAccess](scripts/Win32/RevokeTemporaryAccess) | Complete a one-time early revocation request |
+| [ExtendTemporaryAccess](scripts/Win32/ExtendTemporaryAccess) | Apply an explicit expiry extension without automatically renewing access |
+| [BreakGlassHealth](scripts/Win32/BreakGlassHealth) | Report account health without changing passwords |
+| [AdministratorChanges](scripts/Win32/AdministratorChanges) | Log membership changes since the previous snapshot |
+| [RemoteDesktopMembership](scripts/Win32/RemoteDesktopMembership) | Apply selected Remote Desktop Users membership changes |
+
+Read the [Win32 administrator tools deployment guide](docs/Win32-Administrator-Tools.md) before packaging. Report checks, live membership checks and one-time request receipts intentionally use different detection rules. The existing cleanup and account scripts are unchanged.
+
 ## What Entra user cleanup does
 
 The default policy removes members whose names begin with `AzureAD\` and whose object class is `User`. Exact SID exclusions let organizations retain approved Entra users.
@@ -120,6 +137,7 @@ Run the isolated behavioral checks on Windows:
 
 ```powershell
 powershell.exe -NoProfile -File .\tests\Test-LocalAdminCleanup.ps1
+powershell.exe -NoProfile -File .\tests\Test-Win32Packages.ps1
 ```
 
 The cleanup tests mock account management and logging commands; they do not modify Windows accounts. The original local account scripts receive syntax checks only. A Windows CI workflow runs the same checks. These checks are not a substitute for a managed-device pilot, including your actual LAPS recovery and Entra role configuration.

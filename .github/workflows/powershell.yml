@@ -24,3 +24,6 @@ jobs:
       - name: Temporary administrator grant and removal tests
         shell: powershell
         run: .\tests\Test-TemporaryAdmin.ps1
+      - name: Win32 administrator package tests
+        shell: powershell
+        run: .\tests\Test-Win32Packages.ps1
