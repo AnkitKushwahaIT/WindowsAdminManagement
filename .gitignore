@@ -1,0 +1,9 @@
+# Local deployment artifacts and diagnostics
+*.log
+*.completed
+*.intunewin
+*.zip
+*.pfx
+*.p12
+.env
+.vscode/
