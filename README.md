@@ -24,18 +24,18 @@ The local account scripts preserve the original logic and logging structure, wit
 
 ## Additional Intune Win32 administrator tools
 
-Eight separate packages are available under [`scripts/Win32`](scripts/Win32). Each contains matching standalone `Install.ps1` and `Detection.ps1` files, configurable values at the top, timestamped append-only logging, verification and exit codes for Intune.
+Eight separate packages are available under [`scripts/AdministratorManagement`](scripts/AdministratorManagement). Each contains matching standalone `Install.ps1` and `Detection.ps1` files, configurable values at the top, timestamped append-only logging, verification and exit codes for Intune.
 
 | Package | Purpose |
 | --- | --- |
-| [AdministratorAudit](scripts/Win32/AdministratorAudit) | Report direct administrator membership |
-| [ApprovedAdministratorCheck](scripts/Win32/ApprovedAdministratorCheck) | Detect unexpected members while recognizing valid temporary grants |
-| [TemporaryAccessCheck](scripts/Win32/TemporaryAccessCheck) | Check temporary removal tasks and expiry |
-| [RevokeTemporaryAccess](scripts/Win32/RevokeTemporaryAccess) | Complete a one-time early revocation request |
-| [ExtendTemporaryAccess](scripts/Win32/ExtendTemporaryAccess) | Apply an explicit expiry extension without automatically renewing access |
-| [BreakGlassHealth](scripts/Win32/BreakGlassHealth) | Report account health without changing passwords |
-| [AdministratorChanges](scripts/Win32/AdministratorChanges) | Log membership changes since the previous snapshot |
-| [RemoteDesktopMembership](scripts/Win32/RemoteDesktopMembership) | Apply selected Remote Desktop Users membership changes |
+| [AdministratorAudit](scripts/AdministratorManagement/AdministratorAudit) | Report direct administrator membership |
+| [ApprovedAdministratorCheck](scripts/AdministratorManagement/ApprovedAdministratorCheck) | Detect unexpected members while recognizing valid temporary grants |
+| [TemporaryAccessCheck](scripts/AdministratorManagement/TemporaryAccessCheck) | Check temporary removal tasks and expiry |
+| [RevokeTemporaryAccess](scripts/AdministratorManagement/RevokeTemporaryAccess) | Complete a one-time early revocation request |
+| [ExtendTemporaryAccess](scripts/AdministratorManagement/ExtendTemporaryAccess) | Apply an explicit expiry extension without automatically renewing access |
+| [BreakGlassHealth](scripts/AdministratorManagement/BreakGlassHealth) | Report account health without changing passwords |
+| [AdministratorChanges](scripts/AdministratorManagement/AdministratorChanges) | Log membership changes since the previous snapshot |
+| [RemoteDesktopMembership](scripts/AdministratorManagement/RemoteDesktopMembership) | Apply selected Remote Desktop Users membership changes |
 
 Read the [Win32 administrator tools deployment guide](docs/Win32-Administrator-Tools.md) before packaging. Report checks, live membership checks and one-time request receipts intentionally use different detection rules. The existing cleanup and account scripts are unchanged.
 

@@ -1,6 +1,6 @@
 # Administrator management tools for Intune Win32 apps
 
-Each folder under `scripts/Win32` is a separate Win32 app: an `Install.ps1`, a standalone `Detection.ps1`, and a short deployment guide. Every script follows configuration, timestamped logging, validation, action/check, verification, completion and error handling. Existing repository scripts are unchanged.
+Each folder under `scripts/AdministratorManagement` is a separate Win32 app: an `Install.ps1`, a standalone `Detection.ps1`, and a short deployment guide. Every script follows configuration, timestamped logging, validation, action/check, verification, completion and error handling. Existing repository scripts are unchanged.
 
 ## Packages
 

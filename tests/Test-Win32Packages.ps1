@@ -3,7 +3,7 @@ param([switch]$Child, [string]$Package, [string]$Case)
 $ErrorActionPreference = 'Stop'
 $Repo = Split-Path -Parent $PSScriptRoot
 if (-not $Child) {
-    foreach ($File in Get-ChildItem (Join-Path $Repo 'scripts/Win32') -Recurse -Filter *.ps1) {
+    foreach ($File in Get-ChildItem (Join-Path $Repo 'scripts/AdministratorManagement') -Recurse -Filter *.ps1) {
         $Tokens=$null; $Errors=$null
         $null=[Management.Automation.Language.Parser]::ParseFile($File.FullName,[ref]$Tokens,[ref]$Errors)
         if ($Errors.Count) { throw ($Errors | Out-String) }
@@ -126,7 +126,7 @@ try {
     if ($Case -eq 'pastExpiry') {$Future=[datetime]::UtcNow.AddDays(-1).ToString('yyyy-MM-ddTHH:mm:ssZ')}
     if ($Case -eq 'shorterExpiry') {$Future=[datetime]::UtcNow.AddDays(1).ToString('yyyy-MM-ddTHH:mm:ssZ')}
     foreach ($Action in @('Install','Detection')) {
-        $Text=[IO.File]::ReadAllText((Join-Path $Repo "scripts/Win32/$Package/$Action.ps1"))
+        $Text=[IO.File]::ReadAllText((Join-Path $Repo "scripts/AdministratorManagement/$Package/$Action.ps1"))
         $Text=$Text.Replace("'C:\CompanyIT'", "'"+(Join-Path $TestRoot 'Logs').Replace("'","''")+"'")
         if ($Case -ne 'emptyConfig') {
             $Text=$Text.Replace('$ApprovedAdminSids = @()', '$ApprovedAdminSids = @('''+$global:LocalSid+''')')
